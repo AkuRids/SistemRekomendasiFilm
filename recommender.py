@@ -35,4 +35,5 @@ def recommend(title, top_n=5):
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
     movie_indices = [i[0] for i in sim_scores]
-    return df[['title', 'description']].iloc[movie_indices]
+
+    return df[['title', 'description', 'type', 'country', 'release_year']].iloc[movie_indices]
