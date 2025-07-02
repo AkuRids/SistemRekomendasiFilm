@@ -1,29 +1,33 @@
+# recommender.py
+
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load dataset
 df = pd.read_csv("netflix_titles.csv")
-df = df[df['type'] == 'Movie'].copy()
+
+# Tidak dibatasi hanya Movie — biarkan semua jenis (Movie dan TV Show)
+df = df.copy()
+
+# Isi nilai kosong
 df.fillna('', inplace=True)
 
-# Gabungkan konten
+# Gabungkan fitur konten
 df['combined_features'] = df['title'] + ' ' + df['director'] + ' ' + df['cast'] + ' ' + df['listed_in'] + ' ' + df['description']
 
 # TF-IDF
 tfidf = TfidfVectorizer(stop_words='english')
 tfidf_matrix = tfidf.fit_transform(df['combined_features'])
 
-# Cosine similarity
+# Cosine Similarity
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 # Reset index
 df = df.reset_index()
-
-# Bikin daftar judul dalam lowercase
 df['title_lower'] = df['title'].str.lower().str.strip()
 
-# Fungsi rekomendasi dengan toleransi kesalahan input
+# Fungsi rekomendasi
 def recommend(title, top_n=5):
     title = title.lower().strip()
     if title not in df['title_lower'].values:
